@@ -1,0 +1,293 @@
+/*
+Theme Name: Custom WordPress Theme
+Theme URI: 
+Author: Omar Helal
+Author URI: 
+Description: A simple and custom WordPress theme with responsive design
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: custom-theme
+Tags: responsive, custom-menu, custom-header, custom-post-types
+*/
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f8f8;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #005177;
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header */
+.site-header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px 0;
+}
+
+.site-branding {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-title {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.site-description {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Navigation */
+.main-navigation {
+    margin-top: 15px;
+}
+
+.main-navigation ul {
+    display: flex;
+    list-style: none;
+}
+
+.main-navigation li {
+    margin-right: 20px;
+}
+
+.main-navigation a {
+    padding: 5px 0;
+    font-weight: 500;
+}
+
+/* Mobile Menu Toggle */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Content Area */
+.site-content {
+    padding: 40px 0;
+    flex: 1 0 auto; /* This makes the content area grow and take available space */
+    overflow: hidden; /* Clearfix for floated elements */
+}
+
+.content-area {
+    width: 70%;
+    float: left;
+}
+
+.sidebar {
+    width: 25%;
+    float: right;
+}
+
+/* Posts */
+.post {
+    background-color: #fff;
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.post-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.post-meta {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.post-content {
+    margin-bottom: 20px;
+}
+
+.read-more {
+    display: inline-block;
+    background-color: #0073aa;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.read-more:hover {
+    background-color: #005177;
+    color: #fff;
+}
+
+/* Custom Post Type - Projects */
+.project {
+    background-color: #fff;
+    margin-bottom: 30px;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.project-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.project-meta {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.project-content {
+    margin-bottom: 20px;
+}
+
+.project-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 3px;
+}
+
+/* Footer */
+.site-footer {
+    background-color: #333;
+    color: #fff;
+    padding: 30px 0;
+    position: absolute;
+    bottom: 0;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+.footer-widgets {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.footer-widget {
+    width: 30%;
+}
+
+.footer-widget h3 {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer-branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+}
+
+.footer-logo {
+    max-width: 150px;
+    margin-right: 15px;
+}
+
+.footer-logo img {
+    max-height: 60px;
+    width: auto;
+}
+
+.footer-site-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+}
+
+.site-info {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    font-size: 14px;
+}
+
+/* Page Structure */
+#page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Full viewport height */
+    width: 100%;
+    position: relative;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .content-area,
+    .sidebar {
+        width: 100%;
+        float: none;
+    }
+    
+    .sidebar {
+        margin-top: 30px;
+    }
+    
+    .footer-widgets {
+        flex-direction: column;
+    }
+    
+    .footer-widget {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .main-navigation ul {
+        display: none;
+        flex-direction: column;
+    }
+    
+    .main-navigation.toggled ul {
+        display: flex;
+    }
+    
+    .main-navigation li {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
