@@ -1,0 +1,375 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+<div class="product-template" data-section-id="{{ section.id }}" data-section-type="product">
+  <div class="product-template__container page-width">
+    <div class="product-template__grid">
+      <!-- Product Images -->
+      <div class="product-template__photos">
+        <div class="product-template__main-photo">
+          {% if product.featured_image %}
+            <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.featured_image.alt | escape }}" id="ProductMainImage">
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {% endif %}
+        </div>
+        
+        {% if product.images.size > 1 %}
+          <div class="product-template__thumbnails">
+            {% for image in product.images %}
+              <div class="product-template__thumbnail{% if forloop.first %} active{% endif %}">
+                <img src="{{ image | img_url: '150x' }}" alt="{{ image.alt | escape }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Product Info -->
+      <div class="product-template__info">
+        <h1 class="product-template__title">{{ product.title }}</h1>
+
+        <div class="product-template__price">
+          <span class="product-template__current-price{% if current_variant.compare_at_price > current_variant.price %} on-sale{% endif %}">
+            {{ current_variant.price | money }}
+          </span>
+
+          {% if current_variant.compare_at_price > current_variant.price %}
+            <span class="product-template__compare-price">
+              {{ current_variant.compare_at_price | money }}
+            </span>
+          {% endif %}
+        </div>
+
+        {% form 'product', product %}
+          <select name="id" id="ProductSelect" class="product-template__variants">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}"{% if variant == current_variant %} selected="selected"{% endif %}>
+                {{ variant.title }} - {{ variant.price | money }}
+              </option>
+            {% endfor %}
+          </select>
+
+          <div class="product-template__quantity">
+            <label for="Quantity">Quantity</label>
+            <input type="number" id="Quantity" name="quantity" value="1" min="1" class="quantity-selector">
+          </div>
+
+          <button type="submit" name="add" class="product-template__add-to-cart">
+            {% if current_variant.available %}
+              Add to Cart
+            {% else %}
+              Sold Out
+            {% endif %}
+          </button>
+        {% endform %}
+      </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <div class="product-tabs">
+      <div class="product-tabs__headers">
+        <button class="product-tabs__header active" data-tab="description">Description</button>
+        <button class="product-tabs__header" data-tab="specifications">Specifications</button>
+        <button class="product-tabs__header" data-tab="reviews">Reviews</button>
+      </div>
+
+      <div class="product-tabs__content">
+        <div class="product-tabs__panel active" data-tab-content="description">
+          {{ product.description }}
+        </div>
+
+        <div class="product-tabs__panel" data-tab-content="specifications">
+          <table class="specifications-table">
+            {% for tag in product.tags %}
+              {% if tag contains 'spec:' %}
+                {% assign spec = tag | remove: 'spec:' | split: ':' %}
+                <tr>
+                  <th>{{ spec[0] }}</th>
+                  <td>{{ spec[1] }}</td>
+                </tr>
+              {% endif %}
+            {% endfor %}
+          </table>
+        </div>
+
+        <div class="product-tabs__panel" data-tab-content="reviews">
+          <div id="shopify-product-reviews" data-id="{{product.id}}">{{ product.metafields.spr.reviews }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Products -->
+    <div class="related-products">
+      <h2>You May Also Like</h2>
+      <div class="related-products__grid">
+        {% assign related_products = product.collections.first.products | where: 'id', '!=', product.id | limit: 4 %}
+        {% for related_product in related_products %}
+          <div class="related-products__item">
+            <a href="{{ related_product.url }}" class="related-products__link">
+              <img src="{{ related_product.featured_image | img_url: '300x' }}" alt="{{ related_product.featured_image.alt | escape }}">
+              <h3>{{ related_product.title }}</h3>
+              <p>{{ related_product.price | money }}</p>
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.product-template {
+  padding: 40px 0;
+}
+
+.product-template__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.product-template__photos {
+  position: relative;
+}
+
+.product-template__main-photo img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.product-template__thumbnails {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.product-template__thumbnail {
+  width: 70px;
+  height: 70px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.product-template__thumbnail.active,
+.product-template__thumbnail:hover {
+  opacity: 1;
+}
+
+.product-template__thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-template__title {
+  margin: 0 0 20px;
+  font-size: 2rem;
+}
+
+.product-template__price {
+  margin-bottom: 20px;
+}
+
+.product-template__current-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.product-template__current-price.on-sale {
+  color: #e4434b;
+}
+
+.product-template__compare-price {
+  text-decoration: line-through;
+  color: #666;
+  margin-left: 10px;
+}
+
+.product-template__variants {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.product-template__quantity {
+  margin-bottom: 20px;
+}
+
+.quantity-selector {
+  width: 100px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.product-template__add-to-cart {
+  width: 100%;
+  padding: 15px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.product-template__add-to-cart:hover {
+  background: #333;
+}
+
+/* Tabs Styling */
+.product-tabs {
+  margin-top: 40px;
+}
+
+.product-tabs__headers {
+  display: flex;
+  gap: 2px;
+  margin-bottom: -1px;
+}
+
+.product-tabs__header {
+  padding: 15px 30px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.product-tabs__header.active {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+.product-tabs__content {
+  border: 1px solid #ddd;
+  border-radius: 0 4px 4px 4px;
+  padding: 30px;
+}
+
+.product-tabs__panel {
+  display: none;
+}
+
+.product-tabs__panel.active {
+  display: block;
+}
+
+.specifications-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specifications-table th,
+.specifications-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.specifications-table th {
+  width: 30%;
+  background: #f5f5f5;
+}
+
+/* Related Products */
+.related-products {
+  margin-top: 40px;
+}
+
+.related-products h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.related-products__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.related-products__item {
+  text-align: center;
+}
+
+.related-products__item img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  .product-template__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .product-tabs__headers {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .product-tabs__header {
+    border-radius: 0;
+  }
+
+  .product-tabs__header:first-child {
+    border-radius: 4px 4px 0 0;
+  }
+
+  .related-products__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .related-products__grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Thumbnail Gallery
+  const mainImage = document.getElementById('ProductMainImage');
+  const thumbnails = document.querySelectorAll('.product-template__thumbnail');
+
+  thumbnails.forEach(thumbnail => {
+    thumbnail.addEventListener('click', function() {
+      const newSrc = this.querySelector('img').src.replace('150x', '800x');
+      mainImage.src = newSrc;
+      
+      thumbnails.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Tabs
+  const tabHeaders = document.querySelectorAll('.product-tabs__header');
+  const tabPanels = document.querySelectorAll('.product-tabs__panel');
+
+  tabHeaders.forEach(header => {
+    header.addEventListener('click', function() {
+      const tabId = this.dataset.tab;
+      
+      tabHeaders.forEach(h => h.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+      
+      this.classList.add('active');
+      document.querySelector(`[data-tab-content="${tabId}"]`).classList.add('active');
+    });
+  });
+});
+</script>

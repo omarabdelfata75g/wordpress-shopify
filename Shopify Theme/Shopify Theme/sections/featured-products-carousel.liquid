@@ -1,0 +1,289 @@
+<div class="featured-products-carousel" data-section-id="{{ section.id }}" data-section-type="featured-products" role="region" aria-label="{{ section.settings.title | escape }}">
+  {% if section.settings.title != blank %}
+    <h2 class="section-title">{{ section.settings.title }}</h2>
+  {% endif %}
+
+  {% if section.settings.collection != blank %}
+    <div class="carousel-container">
+      <div class="carousel-wrapper" data-autoplay="{{ section.settings.autoplay }}">
+        {% for product in section.settings.collection.products limit: section.settings.products_to_show %}
+          <div class="carousel-item{% if forloop.first %} active{% endif %}" role="tabpanel" aria-labelledby="product-slide-{{ forloop.index }}">
+            <div class="product-card">
+              <a href="{{ product.url }}" class="product-card__link">
+                <div class="product-card__image">
+                  {% if product.featured_image %}
+                    <img src="{{ product.featured_image | img_url: '400x' }}" alt="{{ product.featured_image.alt | escape }}" loading="lazy">
+                  {% else %}
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {% endif %}
+                </div>
+                <div class="product-card__info">
+                  <h3 class="product-card__title" id="product-slide-{{ forloop.index }}">{{ product.title }}</h3>
+                  <div class="product-card__price" aria-label="Product price">
+                    {% if product.compare_at_price > product.price %}
+                      <span class="product-card__sale-price">{{ product.price | money }}</span>
+                      <span class="product-card__regular-price">{{ product.compare_at_price | money }}</span>
+                      <span class="visually-hidden">Sale price: {{ product.price | money }}, was {{ product.compare_at_price | money }}</span>
+                    {% else %}
+                      <span class="product-card__regular-price">{{ product.price | money }}</span>
+                    {% endif %}
+                  </div>
+                  {% if product.available %}
+                    <span class="product-card__badge product-card__badge--available">In stock</span>
+                  {% else %}
+                    <span class="product-card__badge product-card__badge--sold-out">Sold out</span>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <button type="button" class="carousel-control carousel-control--prev" aria-label="Previous slide">
+        <svg aria-hidden="true" focusable="false" role="presentation" width="8" height="14"><path d="M7 13L1 7l6-6" stroke="currentColor" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+      </button>
+      <button type="button" class="carousel-control carousel-control--next" aria-label="Next slide">
+        <svg aria-hidden="true" focusable="false" role="presentation" width="8" height="14"><path d="M1 13l6-6-6-6" stroke="currentColor" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Featured Products Carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 2,
+      "default": 6,
+      "label": "Products to show"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Auto-rotate slides",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products Carousel",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+.featured-products-carousel {
+  position: relative;
+  margin: 40px 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  padding: 0 40px;
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+  gap: 20px;
+}
+
+.carousel-item {
+  flex: 0 0 calc(33.333% - 20px);
+  max-width: calc(33.333% - 20px);
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card__image {
+  position: relative;
+  padding-bottom: 100%;
+}
+
+.product-card__image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-card__info {
+  padding: 15px;
+}
+
+.product-card__title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.product-card__price {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.product-card__sale-price {
+  color: #e4434b;
+}
+
+.product-card__regular-price {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease;
+}
+
+.carousel-control:hover {
+  background: #fff;
+}
+
+.carousel-control--prev {
+  left: 0;
+}
+
+.carousel-control--next {
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .carousel-item {
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+  }
+  
+  .carousel-container {
+    padding: 0 30px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .carousel-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  class ProductCarousel {
+    constructor(container) {
+      this.container = container;
+      this.wrapper = container.querySelector('.carousel-wrapper');
+      this.slides = container.querySelectorAll('.carousel-item');
+      this.prevButton = container.querySelector('.carousel-control--prev');
+      this.nextButton = container.querySelector('.carousel-control--next');
+      this.currentIndex = 0;
+      this.autoplay = this.wrapper.dataset.autoplay === 'true';
+      this.autoplayInterval = null;
+
+      this.init();
+    }
+
+    init() {
+      this.bindEvents();
+      if (this.autoplay) {
+        this.startAutoplay();
+      }
+    }
+
+    bindEvents() {
+      this.prevButton.addEventListener('click', () => this.prev());
+      this.nextButton.addEventListener('click', () => this.next());
+      this.container.addEventListener('mouseenter', () => this.stopAutoplay());
+      this.container.addEventListener('mouseleave', () => {
+        if (this.autoplay) {
+          this.startAutoplay();
+        }
+      });
+    }
+
+    prev() {
+      this.currentIndex = Math.max(this.currentIndex - 1, 0);
+      this.updateSlidePosition();
+    }
+
+    next() {
+      this.currentIndex = Math.min(this.currentIndex + 1, this.slides.length - 1);
+      this.updateSlidePosition();
+    }
+
+    updateSlidePosition() {
+      const slideWidth = this.slides[0].offsetWidth + 20; // Include gap
+      const transform = -this.currentIndex * slideWidth;
+      this.wrapper.style.transform = `translateX(${transform}px)`;
+    }
+
+    startAutoplay() {
+      this.autoplayInterval = setInterval(() => {
+        if (this.currentIndex >= this.slides.length - 1) {
+          this.currentIndex = -1;
+        }
+        this.next();
+      }, 5000);
+    }
+
+    stopAutoplay() {
+      if (this.autoplayInterval) {
+        clearInterval(this.autoplayInterval);
+        this.autoplayInterval = null;
+      }
+    }
+  }
+
+  const carousels = document.querySelectorAll('.featured-products-carousel');
+  carousels.forEach(carousel => new ProductCarousel(carousel));
+});
+</script>
